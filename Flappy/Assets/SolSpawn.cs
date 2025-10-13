@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PipeSpawnScript : MonoBehaviour
+public class SolSpawn : MonoBehaviour
 {
-    public GameObject pipe;
+    public GameObject sol;
     public float spawnrate = 2;
     private float timer = 0;
     public float heightOffset = 10;
@@ -10,7 +10,7 @@ public class PipeSpawnScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        spawnPipe();
+        spawnSol();
     }
 
     // Update is called once per frame
@@ -22,20 +22,13 @@ public class PipeSpawnScript : MonoBehaviour
         }
         else
         {
-            spawnPipe();
+            spawnSol();
             timer = 0;
         }
 
     }
-    void spawnPipe()
-    {
-        float lowestpoint = transform.position.y - heightOffset + 3;
-        float highestpoint = transform.position.y + heightOffset;
-
-        Instantiate(pipe, new Vector3(transform.position.x, Random.Range(lowestpoint, highestpoint), 0), transform.rotation);
-    }
     void spawnSol()
     {
-       Instantiate(pipe);
+        Instantiate(sol, transform.position, transform.rotation);
     }
 }

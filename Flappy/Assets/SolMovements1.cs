@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PipeMovement : MonoBehaviour
+public class SolMovements : MonoBehaviour
 {
     public float moveSpeed = 5;
     public float deadzone = -70;
@@ -19,7 +19,7 @@ public class PipeMovement : MonoBehaviour
         if (transform.position.x < deadzone)
         {
             Destroy(gameObject);
-            Debug.Log("Pipe Deleted");
+            Debug.Log("Sol Deleted");
         }
     }
 }
