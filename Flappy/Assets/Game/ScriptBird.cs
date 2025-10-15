@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class ScriptBird : MonoBehaviour
 {
@@ -15,10 +16,13 @@ public class ScriptBird : MonoBehaviour
     public float deadSpeed = 7;
     public float deadzone = -70;
 
-    private Collider2D birdCollider; // Référence au collider du bird
+    public Collider2D birdCollider;
 
-    public float freezeDuration = 1f;  // Durée de la pause
-    public float bounceForce = 10f;  // Force du petit bond
+    public SpriteRenderer spriteRenderer;
+    public Sprite activeSprite;
+
+    public float freezeDuration = 1f;
+    public float bounceForce = 10f;
 
     public LogicScript logic;
 
@@ -28,6 +32,7 @@ public class ScriptBird : MonoBehaviour
     void Start()
     {
         logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
     }
 
@@ -46,7 +51,7 @@ public class ScriptBird : MonoBehaviour
 
         }
 
-        if (brasTimer > 0)
+        if (brasTimer > 0 && BirdIsAlive == true)
         {
             brasTimer = brasTimer - Time.deltaTime;
             if (brasTimer <= 0 && animator != null)
@@ -72,25 +77,9 @@ public class ScriptBird : MonoBehaviour
     {
         logic.gameOver();
         BirdIsAlive = false;
-        birdCollider.enabled = false; // Désactiver le Collider pour éviter que le bird interagisse avec l'environnement
+        birdCollider.enabled = false; // Dï¿½sactiver le Collider pour ï¿½viter que le bird interagisse avec l'environnement
+        animator.Play("Dead");
     }
 
-    private IEnumerator FreezeAndBounce()
-    {
-        // Geler le mouvement du Bird pendant une seconde
-        BirdBody.velocity = Vector2.zero;
-
-        // Attendre 1 seconde (congeler le bird)
-        yield return new WaitForSeconds(freezeDuration);
-
-        // Faire un petit bond vers le haut
-        BirdBody.velocity = new Vector2(0, bounceForce);
-
-        // Attendre un peu pour que le bond soit visible
-        yield return new WaitForSeconds(0.5f);
-
-        // Faire tomber le bird hors du champ
-        BirdBody.velocity = new Vector2(-deadSpeed, BirdBody.velocity.y);
-    }
 }
 

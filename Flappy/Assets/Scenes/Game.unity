@@ -1062,7 +1062,11 @@ MonoBehaviour:
   moveSpeed: 20
   deadSpeed: 22
   deadzone: -70
-  rotationSpeed: 5
+  birdCollider: {fileID: 1688638699}
+  spriteRenderer: {fileID: 1688638694}
+  activeSprite: {fileID: 21300000, guid: 4901409bfc67c86429e569265c3a316a, type: 3}
+  freezeDuration: 1
+  bounceForce: 10
   logic: {fileID: 0}
   BirdIsAlive: 1
 --- !u!50 &1688638698
