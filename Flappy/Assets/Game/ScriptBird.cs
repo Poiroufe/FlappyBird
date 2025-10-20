@@ -14,7 +14,7 @@ public class ScriptBird : MonoBehaviour
 
     public float moveSpeed = 5;
     public float deadSpeed = 7;
-    public float deadzone = -70;
+    public float deadzone = -50;
 
     public Collider2D birdCollider;
 
@@ -33,12 +33,11 @@ public class ScriptBird : MonoBehaviour
     {
         logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
     }
 
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && BirdIsAlive == true)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && BirdIsAlive)
         {
             Debug.Log("FLAP !");
             BirdBody.linearVelocity = Vector2.up * flapstrength;
@@ -48,38 +47,52 @@ public class ScriptBird : MonoBehaviour
                 animator.Play("NageUp");
                 brasTimer = brasDuration;
             }
-
         }
 
-        if (brasTimer > 0 && BirdIsAlive == true)
+        if (brasTimer > 0 && BirdIsAlive)
         {
-            brasTimer = brasTimer - Time.deltaTime;
+            brasTimer -= Time.deltaTime;
             if (brasTimer <= 0 && animator != null)
             {
                 animator.Play("Nage");
             }
         }
-        if (BirdIsAlive == false)
+
+        if (!BirdIsAlive && transform.position.y < deadzone)
         {
-            transform.position = transform.position + (Vector3.left * deadSpeed * Time.deltaTime);
-
-            if (transform.position.x < deadzone)
-            {
-                Destroy(gameObject);
                 Debug.Log("Mario Deleted");
-
-            }
-
+                Destroy(gameObject);
+                logic.gameOver();
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        logic.gameOver();
+        if (!BirdIsAlive) return; // éviter les collisions multiples
+
         BirdIsAlive = false;
-        birdCollider.enabled = false; // D�sactiver le Collider pour �viter que le bird interagisse avec l'environnement
+        birdCollider.enabled = false;
+        spriteRenderer.sortingOrder = 10;
+
         animator.Play("Dead");
+        Debug.Log("Ouch");
+
+        // Démarre le freeze
+        StartCoroutine(FreezeFrameThenFall());
     }
 
-}
+    private IEnumerator FreezeFrameThenFall()
+    {
+        // Fige tout le jeu
+        Time.timeScale = 0f;
 
+        // Attend une seconde réelle
+        yield return new WaitForSecondsRealtime(freezeDuration);
+
+        // Reprend le temps
+        Time.timeScale = 1f;
+
+        // (Optionnel) applique une légère impulsion vers le bas pour la chute dramatique
+        BirdBody.linearVelocity = Vector2.up * bounceForce;
+    }
+}
