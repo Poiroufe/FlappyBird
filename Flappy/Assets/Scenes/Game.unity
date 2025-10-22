@@ -166,6 +166,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &173105645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173105647}
+  - component: {fileID: 173105646}
+  m_Layer: 0
+  m_Name: BulleSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &173105646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173105645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b8ae5d1087b13458c333d2a1e72895, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleSpawner
+  bubblePrefab: {fileID: 5659674674497597815, guid: 00099177ec7363843ac940c81e942adb, type: 3}
+  spawnInterval: 4.97
+  spawnRangeX: 28.8
+  spawnYOffset: -5
+--- !u!4 &173105647
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173105645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &257130148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1544,19 +1592,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BirdBody: {fileID: 1688638698}
-  flapstrength: 30
+  flapstrength: 30.8
   animator: {fileID: 1688638700}
-  brasDuration: 0.5
-  moveSpeed: 20
-  deadSpeed: 22
-  deadzone: -70
+  brasDuration: 0.2
+  moveSpeed: 5
+  deadSpeed: 7
+  deadzone: -50
   birdCollider: {fileID: 1688638699}
   spriteRenderer: {fileID: 1688638694}
-  activeSprite: {fileID: 21300000, guid: 4901409bfc67c86429e569265c3a316a, type: 3}
+  activeSprite: {fileID: 0}
   freezeDuration: 1
-  bounceForce: 30
-  logic: {fileID: 0}
+  bounceForce: 10
+  logic: {fileID: 433249348}
   BirdIsAlive: 1
+  leftGravityForce: 5
+  rightGravityForce: 7
 --- !u!50 &1688638698
 Rigidbody2D:
   serializedVersion: 5
@@ -1694,3 +1744,4 @@ SceneRoots:
   - {fileID: 685344379}
   - {fileID: 433249349}
   - {fileID: 638935987}
+  - {fileID: 173105647}

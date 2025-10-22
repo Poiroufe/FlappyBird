@@ -28,6 +28,9 @@ public class ScriptBird : MonoBehaviour
 
     public bool BirdIsAlive = true;
 
+    public float leftGravityForce = 1f; // Force constante vers la gauche
+    public float rightGravityForce = 2f; // Force constante vers la gauche
+
 
     void Start()
     {
@@ -47,6 +50,7 @@ public class ScriptBird : MonoBehaviour
                 animator.Play("NageUp");
                 brasTimer = brasDuration;
             }
+
         }
 
         if (brasTimer > 0 && BirdIsAlive)
@@ -60,9 +64,23 @@ public class ScriptBird : MonoBehaviour
 
         if (!BirdIsAlive && transform.position.y < deadzone)
         {
-                Debug.Log("Mario Deleted");
-                Destroy(gameObject);
-                logic.gameOver();
+            Debug.Log("Mario Deleted");
+            Destroy(gameObject);
+            logic.gameOver();
+        }
+
+        if (animator != null)
+        {
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0); // 0 correspond à la première couche d'animation
+            if (BirdIsAlive && currentState.IsName("NageUp"))
+            {
+                BirdBody.AddForce(Vector2.right * rightGravityForce, ForceMode2D.Force);
+            }
+            if (BirdIsAlive && currentState.IsName("Nage"))
+            {
+                BirdBody.AddForce(Vector2.left * leftGravityForce, ForceMode2D.Force);
+            }
+
         }
     }
 
