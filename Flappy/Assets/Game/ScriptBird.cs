@@ -28,14 +28,25 @@ public class ScriptBird : MonoBehaviour
 
     public bool BirdIsAlive = true;
 
-    public float leftGravityForce = 1f; // Force constante vers la gauche
-    public float rightGravityForce = 2f; // Force constante vers la gauche
+    public float leftGravityForce = 1f;
+    public float rightGravityForce = 2f;
+
+    public float chargeDuration = 1.5f; 
+    public float dashForce = 20f;     
+    public float flashSpeed = 0.1f;   
+    public Color flashColor = Color.white;
+
+    private float holdTimer = 0f;
+    private bool isCharged = false;
+    private Color baseColor;
 
 
     void Start()
     {
         logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        baseColor = spriteRenderer.color;
     }
 
     void Update()
@@ -69,9 +80,33 @@ public class ScriptBird : MonoBehaviour
             logic.gameOver();
         }
 
-        if (animator != null)
+        if (BirdIsAlive && transform.position.x < -65)
         {
-            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0); // 0 correspond à la première couche d'animation
+            Debug.Log("Mario out of bounds");
+            BirdIsAlive = false;
+            birdCollider.enabled = false;
+            spriteRenderer.sortingOrder = 10;
+
+            animator.Play("Dead");
+
+            StartCoroutine(FreezeFrameThenFall());
+        }
+
+        if (BirdIsAlive && transform.position.x > 65)
+        {
+            Debug.Log("Mario out of bounds");
+            BirdIsAlive = false;
+            birdCollider.enabled = false;
+            spriteRenderer.sortingOrder = 10;
+
+            animator.Play("Dead");
+
+            StartCoroutine(FreezeFrameThenFall());
+        }
+
+            if (animator != null)
+        {
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0); 
             if (BirdIsAlive && currentState.IsName("NageUp"))
             {
                 BirdBody.AddForce(Vector2.right * rightGravityForce, ForceMode2D.Force);
@@ -82,11 +117,36 @@ public class ScriptBird : MonoBehaviour
             }
 
         }
+
+        if (Keyboard.current.spaceKey.isPressed && BirdIsAlive)
+        {
+            holdTimer += Time.deltaTime;
+            Debug.Log("HoldTimer: " + holdTimer);
+
+            if (holdTimer >= chargeDuration && !isCharged)
+            {
+                isCharged = true;
+                StartCoroutine(BlinkWhileCharged());
+                Debug.Log("Chargé !");
+            }
+        }
+
+        if (Keyboard.current.spaceKey.wasReleasedThisFrame && BirdIsAlive)
+        {
+            if (isCharged)
+            {
+                StartCoroutine(Dash());
+            }
+
+            holdTimer = 0f;
+            isCharged = false;
+            spriteRenderer.color = baseColor;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!BirdIsAlive) return; // éviter les collisions multiples
+        if (!BirdIsAlive) return;
 
         BirdIsAlive = false;
         birdCollider.enabled = false;
@@ -95,22 +155,43 @@ public class ScriptBird : MonoBehaviour
         animator.Play("Dead");
         Debug.Log("Ouch");
 
-        // Démarre le freeze
         StartCoroutine(FreezeFrameThenFall());
     }
 
     private IEnumerator FreezeFrameThenFall()
     {
-        // Fige tout le jeu
         Time.timeScale = 0f;
 
-        // Attend une seconde réelle
         yield return new WaitForSecondsRealtime(freezeDuration);
 
-        // Reprend le temps
         Time.timeScale = 1f;
 
-        // (Optionnel) applique une légère impulsion vers le bas pour la chute dramatique
+
         BirdBody.linearVelocity = Vector2.up * bounceForce;
+    }
+
+    private IEnumerator BlinkWhileCharged()
+    {
+        Debug.Log("Blink coroutine started");
+        while (isCharged)
+        {
+            spriteRenderer.color = flashColor;
+            yield return new WaitForSeconds(flashSpeed);
+            spriteRenderer.color = baseColor;
+            yield return new WaitForSeconds(flashSpeed);
+        }
+        spriteRenderer.color = baseColor;
+    }
+
+    private IEnumerator Dash()
+    {
+        Debug.Log("DASH !");
+        BirdBody.AddForce(Vector2.right * dashForce, ForceMode2D.Impulse);
+
+        // Optionnel : on désactive temporairement la gravité du courant vers la gauche
+        float oldLeftForce = leftGravityForce;
+        leftGravityForce = 0f;
+        yield return new WaitForSeconds(0.5f); // Durée du dash
+        leftGravityForce = oldLeftForce;
     }
 }

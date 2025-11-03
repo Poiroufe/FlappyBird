@@ -1607,6 +1607,10 @@ MonoBehaviour:
   BirdIsAlive: 1
   leftGravityForce: 5
   rightGravityForce: 7
+  chargeDuration: 0.6
+  dashForce: 30
+  flashSpeed: 0.1
+  flashColor: {r: 1, g: 0.9510489, b: 0, a: 1}
 --- !u!50 &1688638698
 Rigidbody2D:
   serializedVersion: 5
